@@ -1,0 +1,428 @@
+/*
+ * Apple UI Design System – Verified: 8pt Grid, SF Pro Typography, Material-Depth, Natural Spring Motion
+ *
+ * Component styles for the four-tab shell. Split from globals.css (which holds
+ * tokens, typography and primitives) purely for file size — same token set,
+ * same 8pt grid, same light-only palette.
+ */
+
+/* =========================================================================
+   Home dashboard
+   ========================================================================= */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+/* Inherits font-size/weight/tracking from the global h1 rule (28px, 600,
+   -0.022em) — the app's existing headline scale, not a bespoke size, so
+   "bigger" here stays consistent with every other h1 in the app. Only the
+   margin needs overriding: .app-header's own flex row already spaces this
+   from the streak badge, so the h1's default bottom margin would just add
+   unwanted extra height inside that row. */
+.greeting {
+  margin: 0;
+}
+
+/* Streak badge. Dimmed at zero so it reads as an empty state, not a failure. */
+.streak {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 var(--space-2);
+  border-radius: 999px;
+  background: var(--warn-soft);
+  color: var(--warn-ink);
+  font-size: 15px;
+  font-weight: 600;
+}
+.streak[data-empty="true"] {
+  background: var(--surface-2);
+  color: var(--muted);
+  border: 0.5px solid var(--border);
+}
+
+/* --- week strip ---------------------------------------------------------- */
+.week-strip {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--space-1);
+  margin-bottom: var(--space-2);
+}
+.week-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+.week-day-name {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.week-day-dot {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--muted);
+  border: 1.5px dotted var(--border);
+  background: var(--surface);
+  transition: transform var(--duration-standard) var(--ease-spring),
+    background var(--duration-standard) var(--ease-standard);
+}
+.week-day:active .week-day-dot { transform: scale(0.92); }
+/* Today reads as an outline; the day being viewed is filled. */
+.week-day-dot[data-today="true"] { border: 2px solid var(--accent); color: var(--text); }
+.week-day-dot[data-logged="true"] { border-style: solid; color: var(--text); }
+.week-day-dot[data-selected="true"] {
+  background: var(--accent);
+  border: 2px solid var(--accent);
+  color: #fff;
+}
+.week-day-dot[data-future="true"] { opacity: 0.4; }
+
+/* --- calorie hero -------------------------------------------------------- */
+.calorie-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.calorie-value {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  font-size: 40px;
+  font-weight: 600;
+  letter-spacing: -0.022em;
+  line-height: 1.1;
+}
+
+/* --- macro card row ------------------------------------------------------ */
+.macro-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-1);
+  margin-bottom: var(--space-2);
+}
+.macro-card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-2) var(--space-1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+.macro-card-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.macro-card-detail { font-size: 12px; color: var(--muted); }
+
+/* --- recent uploads ------------------------------------------------------ */
+.activity-thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-button);
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--surface-2);
+}
+
+/* =========================================================================
+   Food icon tiles — pantry grid and meal cards without a generated photo
+   ========================================================================= */
+.food-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-button);
+  background: var(--tone-neutral);
+  flex-shrink: 0;
+}
+.food-tile[data-tone="green"] { background: var(--tone-green); }
+.food-tile[data-tone="red"] { background: var(--tone-red); }
+.food-tile[data-tone="amber"] { background: var(--tone-amber); }
+.food-tile[data-tone="blue"] { background: var(--tone-blue); }
+.food-tile[data-tone="purple"] { background: var(--tone-purple); }
+
+/* =========================================================================
+   Meals tab
+   ========================================================================= */
+
+/* Edge-bleeding horizontal rail, iOS-style. */
+.rail {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding: var(--space-1) var(--space-2) var(--space-2);
+  margin: 0 calc(-1 * var(--space-2));
+  scrollbar-width: none;
+}
+.rail::-webkit-scrollbar { display: none; }
+.rail > * { scroll-snap-align: start; flex: 0 0 264px; }
+
+.meal-card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  padding: 0;
+  font-family: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition: transform var(--duration-standard) var(--ease-spring);
+}
+.meal-card:active { transform: scale(0.98); }
+.meal-card-media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56px;
+  background: var(--tone-neutral);
+}
+.meal-card-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.meal-card-body {
+  padding: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.meal-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.011em;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.score-chip {
+  position: absolute;
+  top: var(--space-1);
+  right: var(--space-1);
+  min-width: 40px;
+  height: 28px;
+  padding: 0 var(--space-1);
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.011em;
+}
+
+/* Full-word macro line on meal cards ("Protein 35g"), wrapping gracefully
+   rather than relying on a fixed grid that would break on 3-digit values. */
+.meal-card-macros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-1);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* iOS segmented control. */
+.segmented {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--radius-button);
+  background: var(--surface-2);
+  border: 0.5px solid var(--border);
+  margin-bottom: var(--space-2);
+}
+.segmented button {
+  flex: 1;
+  height: 36px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background var(--duration-standard) var(--ease-standard);
+}
+.segmented button[aria-pressed="true"] {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-card);
+}
+
+/* =========================================================================
+   Pantry grid (Profile tab)
+   ========================================================================= */
+.pantry-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-1);
+}
+.pantry-cell {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-1);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  text-align: center;
+}
+.pantry-cell[data-empty="true"] { opacity: 0.55; }
+.pantry-cell-media {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--radius-button);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  overflow: hidden;
+}
+.pantry-cell-name {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.25;
+  text-transform: capitalize;
+  /* Two-line clamp keeps every tile in the grid the same height. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.freshness {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px var(--space-1);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--muted);
+}
+.freshness[data-state="fresh"] { background: var(--accent-soft); color: var(--accent-ink); }
+.freshness[data-state="use_soon"] { background: var(--warn-soft); color: var(--warn-ink); }
+.freshness[data-state="expired"] { background: var(--score-bad-soft); color: var(--score-bad); }
+
+/* =========================================================================
+   Floating "+" button — same Liquid Glass family as the tab bar, not a
+   flat accent circle. Teal-tinted rather than the tab bar's neutral white
+   glass, so it still reads as the one prominent action amid four neutral
+   destinations, while staying visually part of the same material.
+   ========================================================================= */
+.fab-plus {
+  position: fixed;
+  right: var(--tabbar-gap);
+  /* Clears the floating tab bar itself (its own edge gap + height), plus one
+     grid step of breathing room above it. Mirrors the bar's compact state —
+     see the [data-tabbar-compact] override below — so the two stay visually
+     tethered instead of drifting apart as the bar shrinks. */
+  bottom: calc(
+    env(safe-area-inset-bottom) + var(--tabbar-gap) + var(--tabbar-height) + var(--space-2)
+  );
+  width: 56px;
+  height: 56px;
+  border: none;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--fab-glass-bg);
+  -webkit-backdrop-filter: saturate(var(--glass-saturate)) blur(var(--glass-blur));
+  backdrop-filter: saturate(var(--glass-saturate)) blur(var(--glass-blur));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-fab), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  z-index: 1001;
+  transition: transform var(--duration-standard) var(--ease-spring),
+    bottom var(--duration-standard) var(--ease-standard);
+}
+.fab-plus::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--sheen-top);
+  pointer-events: none;
+}
+.fab-plus:active { transform: scale(0.9); }
+.fab-plus:disabled { opacity: 0.7; }
+
+html[data-tabbar-compact='true'] .fab-plus {
+  bottom: calc(
+    env(safe-area-inset-bottom) + var(--tabbar-gap) + var(--tabbar-height-compact) + var(--space-2)
+  );
+}
+@media (prefers-reduced-motion: reduce) {
+  .fab-plus { transition: none; }
+}
+
+/* =========================================================================
+   Bottom sheet — capture result, meal detail
+   ========================================================================= */
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  z-index: 1100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fade-in var(--duration-standard) var(--ease-standard) both;
+}
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+.sheet {
+  width: 100%;
+  max-width: 560px;
+  max-height: 88vh;
+  overflow-y: auto;
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+  background: var(--bg);
+  padding: var(--space-2) var(--space-2)
+    calc(var(--space-3) + env(safe-area-inset-bottom));
+  animation: sheet-up var(--duration-standard) var(--ease-standard) both;
+}
+@keyframes sheet-up {
+  from { transform: translateY(24px); }
+  to { transform: translateY(0); }
+}
+.sheet-grabber {
+  width: 40px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--border);
+  margin: 0 auto var(--space-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet, .sheet-backdrop { animation: none; }
+  .meal-card, .fab-plus, .week-day-dot { transition: none; }
+}
+

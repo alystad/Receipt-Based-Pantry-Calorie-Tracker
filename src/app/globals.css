@@ -1,0 +1,500 @@
+/*
+ * Apple UI Design System – Verified: 8pt Grid, SF Pro Typography, Material-Depth, Natural Spring Motion
+ *
+ * Strict Light Mode only (per skill rules) — no prefers-color-scheme block.
+ * Mobile-first: the whole app is used one-handed, standing in a kitchen.
+ *
+ * Accent is a clean teal (#0e8a9e) rather than the skill's example blue
+ * (#007AFF): the skill treats accent as adaptable per-app, and this shade is
+ * deliberately deep enough that white button text still clears WCAG AA
+ * (~4.6:1) — Apple's own systemTeal (#30B0C7) reads as fresh but only hits
+ * ~2.6:1 with white text, too low for solid button fills at this size.
+ * Everything else — grid, type, materials, motion — is the skill's literal
+ * spec.
+ */
+
+:root {
+  /* --- 8pt spacing scale (every layout gap/margin/padding is one of these) - */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 40px;
+  --space-6: 48px;
+
+  /* --- radii ---------------------------------------------------------- */
+  --radius-badge: 8px;   /* pills, badges, small controls */
+  --radius-button: 12px; /* buttons, inputs */
+  --radius-card: 20px;   /* cards, modals, sheets */
+
+  /* --- iOS system color tokens (light only) ---------------------------- */
+  --bg: #f2f2f7;              /* iOS grouped-table background */
+  --surface: #ffffff;
+  --surface-2: #ffffff;
+  --border: rgba(60, 60, 67, 0.12); /* iOS hairline separator */
+  --text: #1c1c1e;             /* iOS label */
+  --muted: #8e8e93;            /* iOS secondaryLabel */
+  --accent: #0e8a9e;            /* clean, premium teal — see file header */
+  --accent-soft: #e1f4f6;
+  --accent-ink: #0b6675;       /* accent text on light accent-soft bg */
+  --warn: #ff9500;             /* iOS system orange */
+  --warn-soft: #fff2e0;
+  --warn-ink: #a85f00;
+
+  /* --- health score bands (Yuka-style 0-100) ------------------------------ */
+  --score-excellent: #1b873f;  --score-excellent-soft: #e5f9ea;
+  --score-good:      #58b84c;  --score-good-soft:      #eef7e4;
+  --score-poor:      #ff9500;  --score-poor-soft:      #fff2e0;
+  --score-bad:       #b3261e;  --score-bad-soft:       #fbe6e4;
+
+  /* --- macro ring colors (Home dashboard) --------------------------------- */
+  --macro-protein: #d1453b;
+
+  /* --- food icon tile tints --------------------------------------------- */
+  --tone-green: #e8f7ec;
+  --tone-red: #fdeceb;
+  --tone-amber: #fdf3e0;
+  --tone-blue: #e8f1fd;
+  --tone-purple: #f2ecfb;
+  --tone-neutral: #f0f0f3;
+
+  /* --- glass material (skill: light surfaces) --------------------------- */
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-blur: 20px;
+  --glass-saturate: 180%;
+  --glass-border: rgba(0, 0, 0, 0.1);
+
+  /* --- elevation --------------------------------------------------------- */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.05);
+  --shadow-raised: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-fab: 0 8px 20px rgba(14, 138, 158, 0.35);
+  --shadow-tabbar: 0 12px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  /* --- motion (skill: standard + spring) ---------------------------------- */
+  --ease-standard: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-spring: cubic-bezier(0.4, 0, 0.2, 1.4);
+  --duration-standard: 300ms;
+
+  --tabbar-height: 64px;          /* expanded (icons + labels) */
+  --tabbar-height-compact: 48px;  /* scrolled-down (icons only) — still clears the 44px iOS min tap target */
+  --tabbar-gap: 16px;             /* floating gap from the screen edges, on all three open sides */
+  --tabbar-radius: 32px;          /* capsule at full height */
+  --tabbar-radius-compact: 24px;
+  --fab-size: 64px;
+
+  /* --- Liquid Glass (tab bar + FAB) ---------------------------------------
+     A tuned variant of the shared .glass recipe below: floating over
+     arbitrary page content on every edge (not just the top, like the sheet
+     overlay does) needs a touch more opacity to keep icon/label contrast
+     solid, and a richer blur to read as "frosted" rather than "smudged".  */
+  --tabbar-glass-bg: rgba(255, 255, 255, 0.78);
+  --tabbar-glass-blur: 28px;
+  --fab-glass-bg: rgba(14, 138, 158, 0.86); /* teal-tinted glass, not flat fill */
+  --sheen-top: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 45%);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  /* SF Pro Text stack, exactly as specified — -apple-system/BlinkMacSystemFont
+     resolve to real SF Pro on Apple + Chromium; there is no legal way to
+     self-host SF Pro, so the fallback chain IS the implementation. */
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: -0.011em;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+
+.shell {
+  max-width: 560px;
+  margin: 0 auto;
+  /* Clears the floating tab bar (its own bottom gap plus its expanded
+     height — content should never ride up under it even while it's
+     compact), the home indicator, and the floating "+" above the bar. */
+  padding: var(--space-3) var(--space-2)
+    calc(
+      var(--tabbar-gap) + var(--tabbar-height) + env(safe-area-inset-bottom) + var(--space-6)
+    );
+}
+
+/* --- typography ----------------------------------------------------------
+   Headlines: -0.022em tracking / 1.2 line-height / 600 weight (SF Pro Display)
+   Body: -0.011em tracking / 1.5 line-height / 400 weight (SF Pro Text)      */
+h1, h2, h3 {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  letter-spacing: -0.022em;
+  line-height: 1.2;
+  font-weight: 600;
+  color: var(--text);
+}
+h1 { font-size: 28px; margin: 0 0 var(--space-1); }
+h2 { font-size: 20px; margin: var(--space-4) 0 var(--space-2); }
+h3 { font-size: 16px; margin: 0 0 var(--space-1); }
+p  { margin: 0 0 var(--space-2); }
+
+.sub { color: var(--muted); font-size: 15px; margin: 0 0 var(--space-3); }
+.muted { color: var(--muted); }
+.small { font-size: 14px; }
+.tiny { font-size: 13px; }
+.eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+/* --- surfaces --------------------------------------------------------- */
+.card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--space-2);
+  box-shadow: var(--shadow-card);
+  margin-bottom: var(--space-2);
+}
+
+/* Frosted / glass treatment for chrome and floating surfaces: nav bar,
+   overlays, sheets. Reserved for chrome, not primary content cards — that
+   matches Apple's own use of materials (toolbars/sheets get glass, list
+   content stays opaque). */
+.glass {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: saturate(var(--glass-saturate)) blur(var(--glass-blur));
+  backdrop-filter: saturate(var(--glass-saturate)) blur(var(--glass-blur));
+  border: 0.5px solid var(--glass-border);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.stack { display: flex; flex-direction: column; gap: var(--space-1); }
+
+/* --- buttons -----------------------------------------------------------
+   Primary buttons: 44px height (iOS min tap target), 0 24px padding,
+   12px radius, 0 4px 12px shadow.                                        */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  height: 44px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-button);
+  border: 0.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.011em;
+  cursor: pointer;
+  transition: transform var(--duration-standard) var(--ease-spring),
+    box-shadow var(--duration-standard) var(--ease-standard),
+    opacity var(--duration-standard) var(--ease-standard);
+}
+.btn:hover { transform: scale(1.02); }
+.btn:active { transform: scale(0.96); }
+.btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: var(--shadow-raised);
+}
+
+.btn-block { width: 100%; }
+.btn-sm { height: 32px; padding: 0 var(--space-2); font-size: 14px; border-radius: var(--radius-badge); }
+.btn-plain { border-color: transparent; background: transparent; box-shadow: none; }
+
+/* --- macro display -------------------------------------------------------- */
+.macros {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-1);
+  text-align: center;
+}
+.macro-value {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.022em;
+}
+.macro-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+/* --- pills ---------------------------------------------------------------- */
+.pill {
+  display: inline-block;
+  padding: var(--space-1) var(--space-2);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  border: 0.5px solid var(--border);
+}
+.pill-accent { background: var(--accent-soft); color: var(--accent-ink); border-color: transparent; }
+.pill-warn { background: var(--warn-soft); color: var(--warn-ink); border-color: transparent; }
+
+.chips { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+.chip {
+  height: 36px;
+  padding: 0 var(--space-2);
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 0.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform var(--duration-standard) var(--ease-spring),
+    background var(--duration-standard) var(--ease-standard);
+}
+.chip:active { transform: scale(0.96); }
+.chip[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* --- list items ------------------------------------------------------------- */
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  border-bottom: 0.5px solid var(--border);
+}
+.item:last-child { border-bottom: none; }
+.item-empty { opacity: 0.5; }
+
+/* --- forms -------------------------------------------------------------------
+   iOS-style filled inputs: no border, tinted fill, 44px min tap target.       */
+input[type='text'], input[type='number'], select, textarea {
+  width: 100%;
+  height: 44px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-button);
+  border: none;
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text);
+  font-size: 16px; /* 16px stops iOS Safari zooming on focus */
+  font-family: inherit;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: var(--space-1);
+}
+
+/* --- tab bar -----------------------------------------------------------
+   Four evenly-weighted tabs: Home, Meals, List, Profile. Capture is a
+   separate floating button (.fab-plus in components.css), not a tab.
+   iOS 26 "Liquid Glass": floats clear of every edge (not flush like a
+   classic UITabBar), so the safe-area inset is cleared by the `bottom`
+   offset itself rather than by internal padding — there's no edge left
+   for the home indicator to collide with. Shrinks to icons-only on scroll
+   down and springs back open on scroll up (state owned by TabBar.tsx).  */
+.tabbar {
+  position: fixed;
+  left: var(--tabbar-gap);
+  right: var(--tabbar-gap);
+  bottom: calc(env(safe-area-inset-bottom) + var(--tabbar-gap));
+  height: var(--tabbar-height);
+  border-radius: var(--tabbar-radius);
+  z-index: 1000;
+  transition: height var(--duration-standard) var(--ease-standard),
+    border-radius var(--duration-standard) var(--ease-standard);
+}
+.tabbar[data-compact='true'] {
+  height: var(--tabbar-height-compact);
+  border-radius: var(--tabbar-radius-compact);
+}
+
+.tabbar-surface {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  border-radius: inherit;
+  /* Clips the blur + sheen to the capsule shape, and the flex row to it too
+     — without this the frosted rectangle would show through past the
+     animated corner radius as it shrinks. */
+  overflow: hidden;
+  background: var(--tabbar-glass-bg);
+  -webkit-backdrop-filter: saturate(var(--glass-saturate)) blur(var(--tabbar-glass-blur));
+  backdrop-filter: saturate(var(--glass-saturate)) blur(var(--tabbar-glass-blur));
+  border: 0.5px solid var(--glass-border);
+  /* Depth (soft ambient shadow) + a crisp specular line along the top edge —
+     the two together are what read as "glass" rather than "flat blur". */
+  box-shadow: var(--shadow-tabbar), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+/* The sheen itself: a soft light gradient overlay, not a flat tint. */
+.tabbar-surface::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--sheen-top);
+  pointer-events: none;
+}
+
+.tabbar-link {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  transition: color var(--duration-standard) var(--ease-standard);
+}
+.tabbar-link svg {
+  transition: transform var(--duration-standard) var(--ease-spring);
+}
+.tabbar-link:active svg { transform: scale(0.9); }
+.tabbar-link[data-active='true'] { color: var(--accent); font-weight: 600; }
+
+.tabbar-label {
+  display: block;
+  max-height: 13px;
+  opacity: 1;
+  overflow: hidden;
+  transition: max-height var(--duration-standard) var(--ease-standard),
+    opacity var(--duration-standard) var(--ease-standard);
+}
+/* Compact: labels fold away and icons nudge up to fill the shorter capsule —
+   an animated collapse, not a hard display:none swap. */
+.tabbar[data-compact='true'] .tabbar-label {
+  max-height: 0;
+  opacity: 0;
+}
+.tabbar[data-compact='true'] .tabbar-link svg {
+  transform: scale(1.06);
+}
+
+/* Staggered entrance across the four tabs. */
+@keyframes tabbar-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.tabbar-link {
+  animation: tabbar-rise var(--duration-standard) var(--ease-standard) both;
+}
+.tabbar-link:nth-child(1) { animation-delay: 0ms; }
+.tabbar-link:nth-child(2) { animation-delay: 40ms; }
+.tabbar-link:nth-child(3) { animation-delay: 80ms; }
+.tabbar-link:nth-child(4) { animation-delay: 120ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tabbar-link { animation: none; }
+  .btn, .chip { transition: none; }
+  .tabbar, .tabbar-label, .tabbar-link svg { transition: none; }
+}
+
+/* --- staggered list entrance, used for home-screen summary cards ---------- */
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.rise-in {
+  animation: rise-in var(--duration-standard) var(--ease-standard) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rise-in { animation: none; }
+}
+
+/* --- misc ------------------------------------------------------------------- */
+.banner {
+  padding: var(--space-2);
+  border-radius: var(--radius-button);
+  background: var(--warn-soft);
+  color: var(--warn-ink);
+  font-size: 14px;
+  margin-bottom: var(--space-2);
+}
+.banner-ok { background: var(--accent-soft); color: var(--accent-ink); }
+
+.photo-preview {
+  width: 100%;
+  border-radius: var(--radius-card);
+  display: block;
+  border: 0.5px solid var(--border);
+}
+
+.thumb-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-1); }
+.thumb { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: var(--radius-button); }
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.empty {
+  text-align: center;
+  padding: var(--space-4) var(--space-2);
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Keeps a heading landmark for screen readers on screens where the tab bar
+   already names the page on-screen — visible text would just repeat it,
+   which the design system treats as noise, but removing the heading node
+   entirely would leave the page without a document-outline title. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- progress bar (calorie goal) --------------------------------------------- */
+.progress-track {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: width var(--duration-standard) var(--ease-standard);
+}
+
