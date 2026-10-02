@@ -1,6 +1,6 @@
-# Pantry (backend)
+# Receipt-Based Pantry & Calorie Tracker
 
-Zero-friction pantry and meal tracking. The only recurring action is
+Receipt-based pantry and calorie tracking with AI meal logging. The only recurring action is
 photographing your meal — receipts fill the pantry, meal photos empty it.
 
 **This is an API-only backend.** The UI lives in a separate Expo (React
